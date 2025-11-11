@@ -11,12 +11,9 @@ export default async function Page() {
     redirect("/login");
   }
 
-  if (session.user.name === session.user.phoneNumber) {
-    redirect("/w/onboarding");
-  }
   return (
     <main>
-      <div>Hello world!</div>
+      <div>Onboarding</div>
     </main>
   );
 }
