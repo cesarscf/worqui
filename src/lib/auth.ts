@@ -10,7 +10,16 @@ export const auth = betterAuth({
   plugins: [
     phoneNumber({
       sendOTP: ({ phoneNumber, code }) => {
-        console.log(`Code: ${code} sent to: ${phoneNumber}`);
+        console.log(`➡️ Code: ${code} 📱 sent to: ${phoneNumber}`);
+      },
+      signUpOnVerification: {
+        getTempEmail: (phoneNumber) => {
+          return `${phoneNumber}@my-site.com`;
+        },
+
+        getTempName: (phoneNumber) => {
+          return phoneNumber;
+        },
       },
     }),
   ],
