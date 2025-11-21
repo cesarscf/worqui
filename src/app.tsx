@@ -1,9 +1,30 @@
-import { Button } from "./components/ui/button"
+import {
+  createRootRoute,
+  createRouter,
+  RouterProvider,
+} from "@tanstack/react-router"
 
-export function App() {
+export const Route = createRootRoute({
+  component: RootComponent,
+})
+
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import { routeTree } from "@/router-tree.gen"
+
+const router = createRouter({ routeTree })
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router
+  }
+}
+
+function RootComponent() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <RouterProvider router={router} />
+      <Toaster richColors />
+    </ThemeProvider>
   )
 }
