@@ -9,13 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as MyOrdersLayoutRouteImport } from './pages/my-orders/layout'
 import { Route as IndexRouteImport } from './pages/index'
+import { Route as MyOrdersIndexRouteImport } from './pages/my-orders/index'
 import { Route as LoginIndexRouteImport } from './pages/login/index'
 
+const MyOrdersLayoutRoute = MyOrdersLayoutRouteImport.update({
+  id: '/my-orders',
+  path: '/my-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MyOrdersIndexRoute = MyOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MyOrdersLayoutRoute,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
@@ -25,38 +37,58 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/my-orders': typeof MyOrdersLayoutRouteWithChildren
   '/login': typeof LoginIndexRoute
+  '/my-orders/': typeof MyOrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginIndexRoute
+  '/my-orders': typeof MyOrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/my-orders': typeof MyOrdersLayoutRouteWithChildren
   '/login/': typeof LoginIndexRoute
+  '/my-orders/': typeof MyOrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/my-orders' | '/login' | '/my-orders/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login/'
+  to: '/' | '/login' | '/my-orders'
+  id: '__root__' | '/' | '/my-orders' | '/login/' | '/my-orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MyOrdersLayoutRoute: typeof MyOrdersLayoutRouteWithChildren
   LoginIndexRoute: typeof LoginIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/my-orders': {
+      id: '/my-orders'
+      path: '/my-orders'
+      fullPath: '/my-orders'
+      preLoaderRoute: typeof MyOrdersLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/my-orders/': {
+      id: '/my-orders/'
+      path: '/'
+      fullPath: '/my-orders/'
+      preLoaderRoute: typeof MyOrdersIndexRouteImport
+      parentRoute: typeof MyOrdersLayoutRoute
     }
     '/login/': {
       id: '/login/'
@@ -68,8 +100,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface MyOrdersLayoutRouteChildren {
+  MyOrdersIndexRoute: typeof MyOrdersIndexRoute
+}
+
+const MyOrdersLayoutRouteChildren: MyOrdersLayoutRouteChildren = {
+  MyOrdersIndexRoute: MyOrdersIndexRoute,
+}
+
+const MyOrdersLayoutRouteWithChildren = MyOrdersLayoutRoute._addFileChildren(
+  MyOrdersLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MyOrdersLayoutRoute: MyOrdersLayoutRouteWithChildren,
   LoginIndexRoute: LoginIndexRoute,
 }
 export const routeTree = rootRouteImport
